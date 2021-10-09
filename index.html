@@ -387,15 +387,17 @@
             $('.write-btn').addClass('disabled');
     }
 
-    function GenerateInputTag(inputName, inputId, type) {
+    function GenerateInputTag(inputName, inputId, counter, counterInput, type) {
+
         if (inputName !== "") {
             return ' <div class="form-group"><label>' + inputName + ' (' + type + ') </label>' +
-                '<input type="text" class="form-control form-control-xs" id="' + inputId + '" name="noname" data-type="' + type + '" placeholder="&nbsp; ' + inputName + ' (' + type + ')"></div>';
+                '<input type="text" class="form-control form-control-xs" name="' + inputId + '" id="input_' + counter + '_' + counterInput + '" data-type="' + type + '" placeholder="&nbsp; ' + inputName + ' (' + type + ')"></div>';
 
         } else {
             return ' <div class="form-group"><label>' + type + '</label>' +
-                '<input type="text" class="form-control form-control-xs" id="' + inputId + '" name="noname" data-type="' + type + '" placeholder=" &nbsp; &lt;input&gt (' + type + ')"></div>';
+                '<input type="text" class="form-control form-control-xs" name="' + inputId + '" data-type="' + type + '" id="input_' + counter + '_' + counterInput + '" placeholder=" &nbsp; &lt;input&gt (' + type + ')"></div>';
         }
+
     }
 
     function GenerateRow(fieldName, outputFieldsWithName, counter, body) {
