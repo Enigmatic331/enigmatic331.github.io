@@ -429,13 +429,13 @@
 
         $(".write-msg").empty();
 
-        var functiontoCall = 'myContractInstance.methods.' + method;
+        var functiontoCall = 'myContractInstance.methods[\'' + method + '\']';
         var params = [];
         var ctrl = document.querySelectorAll("[name=" + input + "]");
         var inputs = [];
 
         if (input.indexOf("_proxy") !== -1)
-            functiontoCall = 'myProxyContractInstance.methods.' + method;
+            functiontoCall = 'myProxyContractInstance.methods[\'' + method + '\']';
 
         for (var i = 0; i < ctrl.length; i++) {
             var type = ctrl[i].getAttribute('data-type');
@@ -463,8 +463,8 @@
         //get input number - which is always the second element
         var splitTmp = input.split("_");
         var counter = splitTmp[1];
-        var payableAmountInput = document.getElementById("input_payable_" + counter + '_' + method);
-        var payableParam = payableAmountInput && !isNaN(payableAmountInput.value) ? ', value: "' + Web3Utils.toWei(payableAmountInput.value, "ether") + '"' : '';
+        var payableAmountInput = document.getElementById("input_payable_" + counter + '_' + method.substring(0, method.lastIndexOf("(")));
+        var payableParam = payableAmountInput && !isNaN(payableAmountInput.value) ? ', value: "' + web3.utils.toWei(payableAmountInput.value, "ether") + '"' : '';
 
         try {
             new Function(functiontoCall + "(" + params + ").send({ from:'" + web3.eth.defaultAccount + "'" + payableParam + "})" +
@@ -473,7 +473,6 @@
         } catch (err) {
             showTx(err.message, '', input);
         }
-
     }
 
     function encodeParams(values) {
