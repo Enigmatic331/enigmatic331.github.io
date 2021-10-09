@@ -526,49 +526,7 @@
 
         return params;
     }
-        var params = '';
 
-        if (values.length === 0)
-            return undefined;
-
-        for (i = 0; i < values.length; i++) {
-            var param = values[i];
-
-            if (param.value !== '') {
-                if (param.grp !== null) {
-                    var _grp = values.filter(function (x) { return x.grp == param.grp });
-                    var _grpParam = '';
-
-                    for (g = 0; g < _grp.length; g++) {
-                        param = _grp[g];
-
-                        if (param.value[0] !== '') {
-                            if (g == 0)
-                                _grpParam = '[' + toHex(param.type, Escape(param.value[0]));
-                            else
-                                _grpParam = _grpParam + ',' + toHex(param.type, Escape(param.value[0]));
-                        }
-                    }
-                    _grpParam += ']';
-
-                    if (i == 0)
-                        params += _grpParam;
-                    else
-                        params += ',' + _grpParam;
-
-                    i += _grp.length - 1;
-                }
-                else {
-                    if (i == 0)
-                        params = toHex(param.type, Escape(param.value[0]));
-                    else
-                        params = params + ',' + toHex(param.type, Escape(param.value[0]));
-                }
-            }
-        }
-
-        return params;
-    }
 
     function Escape(val) {
 
