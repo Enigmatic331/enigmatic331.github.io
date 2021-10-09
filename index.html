@@ -403,10 +403,7 @@
     function GenerateRow(fieldName, outputFieldsWithName, counter, body) {
         if (!hasInput) {
             hasInput = true;
-
-            header.append('<div class="alert bg-light border"><p class="mb-0"><i class="fas fa-magic text-primary mr-1"></i> <strong>Feature Tip:</strong> <a class="font-weight-bold" href="/dapp/' + contractAddress + '"  target="_parent">Etherscan Dapp Page</a> - A new front-end interface for any smart contract on Ethereum!</p></div>')
-            header.append('<div class="d-sm-flex justify-content-between mb-3"><p class="ml-3 mr-3 mb-1"><i id="connector" class="fa fa-circle text-danger mr-1"></i> Write Contract <a id="connectWeb3" style="font-size: 12px!important" href="#" onclick="connectWeb3(); return false;">Connect to Web3</a ></p><a class="ml-3 mr-3" href="?m=' + mode + '&a=' + contractAddress + '&n=' + net + '">[Reset]</a></div >');
-
+            header.append('<div class="d-sm-flex justify-content-between mb-3"><p class="ml-3 mr-3 mb-1"><button type="button" class="write-btn btn btn-xs btn-secondary border disabled" id="connectStatus" id="connectWeb3" onclick="openModal(); return false;"><i id="connector" class="fa fa-circle text-danger mr-1"></i>Connect to Web3</button></p><span><a href="#" class="mr - 1 expandCollapseAllButton" onclick="expandCollapseAll()">[Expand all]</a><a class="ml-3 mr-3" href="#" onclick="resetPage(); return false;">[Reset]</a></span></div >');
         }
         var output = '<div class="card shadow-none mb-3"><div class="card-header bg-light card-collapse p-0" role="tab" id="heading' + counter + '">' +
             '<a role="button" class="btn btn-link btn-block text-dark d-flex justify-content-between align-items-center py-2"  data-toggle="collapse" data-parent="#accordion" href="#collapse' + counter + '" aria-expanded="true" aria-controls="collapse' + counter + '">' + counter + '. ' + fieldName + '<span class="accordion-arrow"><i class="fas fa-arrow-down small"></i></span></a></div>' +
@@ -429,11 +426,15 @@
             return;
         }
 
+        $(".write-msg").empty();
 
         var functiontoCall = 'myContractInstance.methods.' + method;
         var params = [];
-        var ctrl = document.querySelectorAll("[id=" + input + "]");
+        var ctrl = document.querySelectorAll("[name=" + input + "]");
         var inputs = [];
+
+        if (input.indexOf("_proxy") !== -1)
+            functiontoCall = 'myProxyContractInstance.methods.' + method;
 
         for (var i = 0; i < ctrl.length; i++) {
             var type = ctrl[i].getAttribute('data-type');
@@ -446,7 +447,9 @@
                 return false;
             }
 
-            var value = strip(ctrl[i].value);
+            // don't trip formatting at all
+            var value = ctrl[i].value;
+
             if (value) {
                 if (type.indexOf('[') !== -1 && type.indexOf(']') !== -1) values.push(value.split(','));
                 else values.push(value);
@@ -456,11 +459,14 @@
         }
 
         var params = encodeParams(inputs);
-        var payableAmountInput = document.getElementById("input_payable_" + method);
-        var payableParam = payableAmountInput && !isNaN(payableAmountInput.value) ? ', { value: web3.toWei(' + Escape(payableAmountInput.value) + ', "ether") }' : '';
+        //get input number - which is always the second element
+        var splitTmp = input.split("_");
+        var counter = splitTmp[1];
+        var payableAmountInput = document.getElementById("input_payable_" + counter + '_' + method);
+        var payableParam = payableAmountInput && !isNaN(payableAmountInput.value) ? ', value: "' + Web3Utils.toWei(payableAmountInput.value, "ether") + '"' : '';
 
         try {
-            new Function(functiontoCall + "(" + params + payableParam + ").send({ from:'" + web3.eth.defaultAccount + "'})" +
+            new Function(functiontoCall + "(" + params + ").send({ from:'" + eth.defaultAccount + "'" + payableParam + "})" +
                 ".on('transactionHash', function(hash) { showTx('', hash, '" + input + "'); })" +
                 ".on('error', function(error) { showTx(error, '', '" + input + "') });")();
         } catch (err) {
