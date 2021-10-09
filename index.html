@@ -467,7 +467,7 @@
         var payableParam = payableAmountInput && !isNaN(payableAmountInput.value) ? ', value: "' + Web3Utils.toWei(payableAmountInput.value, "ether") + '"' : '';
 
         try {
-            new Function(functiontoCall + "(" + params + ").send({ from:'" + eth.defaultAccount + "'" + payableParam + "})" +
+            new Function(functiontoCall + "(" + params + ").send({ from:'" + web3.eth.defaultAccount + "'" + payableParam + "})" +
                 ".on('transactionHash', function(hash) { showTx('', hash, '" + input + "'); })" +
                 ".on('error', function(error) { showTx(error, '', '" + input + "') });")();
         } catch (err) {
