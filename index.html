@@ -680,32 +680,7 @@
         else
             return val
     };
-
-        if (Array.isArray(val)) {
-            var param = "[";
-
-            var i;
-            for (i = 0; i < val.length; i++) {
-                if (i == 0)
-                    param += toHex(type, val[i]);
-                else
-                    param = param + ',' + toHex(type, val[i]);
-            }
-            param += "]";
-
-            return param;
-
-        } else {
-            if (type.indexOf('bool') !== -1)
-                return JSON.parse(val);
-            else if (type.indexOf('address') !== -1)
-                return "'" + add0xforAddress(val) + "'"
-            else
-                return "'" + val + "'"
-        }
-
-    };
-
+	
     function showTx(err, msg, input) {
 
         if (err) {
